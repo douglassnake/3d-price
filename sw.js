@@ -1,6 +1,6 @@
 /* 3D Price PWA: cache offline somente arquivos do próprio app. */
-const VERSION='3d-price-pwa-v1';
-const CORE=['./','./index.html','./styles.css','./src/app.js','./src/calculator.js','./src/printerCatalog.js','./manifest.webmanifest','./icons/icon.svg'];
+const VERSION='3d-price-pwa-v2';
+const CORE=['./','./index.html','./styles.css','./src/app.js','./src/calculator.js','./src/printerCatalog.js','./manifest.webmanifest','./icons/icon.svg','./icons/icon-192.png','./icons/icon-512.png'];
 self.addEventListener('install',event=>{event.waitUntil(caches.open(VERSION).then(cache=>cache.addAll(CORE)).then(()=>self.skipWaiting()))});
 self.addEventListener('activate',event=>{event.waitUntil((async()=>{for(const key of await caches.keys()){if(key.startsWith('3d-price-pwa-')&&key!==VERSION)await caches.delete(key)}await self.clients.claim()})())});
 self.addEventListener('fetch',event=>{
