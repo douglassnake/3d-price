@@ -38,3 +38,10 @@ el('jsonFile').onchange=async e=>{const file=e.target.files?.[0];if(!file)return
 store.printerCatalogVersion=CATALOG_VERSION;renderSelectors();paintFields();update();renderHistory();applyTheme()}catch(err){alert('Não foi possível importar: '+err.message)}finally{e.target.value=''}};
 const applyTheme=()=>{document.body.classList.toggle('dark',store.dark);el('themeBtn').textContent=store.dark?'☼ Claro':'◐ Tema'};el('themeBtn').onclick=()=>{store.dark=!store.dark;applyTheme();persisted()};
 renderSelectors();paintFields();if(el('printerExampleNotice'))el('printerExampleNotice').hidden=!store.printers.find(p=>p.id===store.draft.printer)?.example;applyTheme();update();
+const installButton=el('installApp');let deferredInstall=null;
+window.addEventListener('beforeinstallprompt',event=>{event.preventDefault();deferredInstall=event;installButton.hidden=false;});
+window.addEventListener('appinstalled',()=>{deferredInstall=null;installButton.hidden=true;});
+installButton.addEventListener('click',async()=>{if(!deferredInstall)return;const prompt=deferredInstall;deferredInstall=null;installButton.hidden=true;await prompt.prompt();});
+function updateConnection(){const badge=el('offlineBadge');if(badge)badge.textContent=navigator.onLine?'':'Modo offline • '; }
+window.addEventListener('online',updateConnection);window.addEventListener('offline',updateConnection);updateConnection();
+if('serviceWorker' in navigator){window.addEventListener('load',()=>{navigator.serviceWorker.register('./sw.js',{scope:'./'}).catch(error=>console.warn('PWA offline indisponível:',error));});}
