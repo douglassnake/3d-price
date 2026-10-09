@@ -1,4 +1,5 @@
 import {calculate,money} from './calculator.js';
+import {CATALOG_VERSION,mergePrinterCatalog} from './printerCatalog.js';
 const KEY='3d-price-v1';
 const defaultPrinters=[{id:'p1',name:'Impressora doméstica (exemplo)',price:2500,life:4000,watts:120,maintenance:.35}];
 const defaultMaterials=[{id:'m1',name:'PLA (exemplo)',price:90,grams:1000},{id:'m2',name:'PETG (exemplo)',price:110,grams:1000},{id:'m3',name:'ABS (exemplo)',price:100,grams:1000},{id:'m4',name:'TPU (exemplo)',price:150,grams:1000}];
@@ -7,12 +8,14 @@ const el=id=>document.getElementById(id);
 let store;
 try{store=JSON.parse(localStorage.getItem(KEY)||'null')}catch{store=null}
 if(!store||typeof store!=='object')store={};
-store={printers:Array.isArray(store.printers)?store.printers:defaultPrinters,materials:Array.isArray(store.materials)?store.materials:defaultMaterials,history:Array.isArray(store.history)?store.history:[],draft:{...defaults,...(store.draft||{})},dark:!!store.dark};
+store={printerCatalogVersion:Number(store.printerCatalogVersion)||0,printers:Array.isArray(store.printers)?store.printers:defaultPrinters,materials:Array.isArray(store.materials)?store.materials:defaultMaterials,history:Array.isArray(store.history)?store.history:[],draft:{...defaults,...(store.draft||{})},dark:!!store.dark};
+store.printers=mergePrinterCatalog(store.printers,store.printerCatalogVersion);
+store.printerCatalogVersion=CATALOG_VERSION;
 const fields=Object.keys(defaults), persisted=()=>{try{localStorage.setItem(KEY,JSON.stringify(store))}catch{alert('Armazenamento indisponível. Exporte um backup ou libere espaço no navegador.')}};
 const text=(s)=>String(s??'');const safe=s=>text(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const uid=()=>crypto.randomUUID?.()||String(Date.now())+Math.random().toString(36).slice(2);
 function renderSelectors(){for(const [id,list] of [['printer',store.printers],['material',store.materials]]){el(id).innerHTML=list.map(v=>`<option value="${safe(v.id)}">${safe(v.name)}</option>`).join('');if(list.some(v=>v.id===store.draft[id]))el(id).value=store.draft[id];else {store.draft[id]=list[0]?.id||'';el(id).value=store.draft[id]}}}
-function preset(type){const p=store[type==='printer'?'printers':'materials'].find(v=>v.id===store.draft[type]);if(!p)return; if(type==='printer'){Object.assign(store.draft,{machinePrice:p.price,lifeHours:p.life,watts:p.watts,maintenance:p.maintenance})}else Object.assign(store.draft,{spoolPrice:p.price,spoolGrams:p.grams});paintFields()}
+function preset(type){const p=store[type==='printer'?'printers':'materials'].find(v=>v.id===store.draft[type]);if(!p)return; if(type==='printer'){Object.assign(store.draft,{machinePrice:p.price,lifeHours:p.life,watts:p.watts,maintenance:p.maintenance});if(el('printerExampleNotice'))el('printerExampleNotice').hidden=!p.example;}else Object.assign(store.draft,{spoolPrice:p.price,spoolGrams:p.grams});paintFields()}
 function paintFields(){for(const k of fields){if(el(k))el(k).value=store.draft[k]??''}}
 function read(){for(const k of fields){const input=el(k);store.draft[k]=input.type==='number'?input.value===''?NaN:Number(input.value):input.value}persisted();update()}
 let current=null;
@@ -31,6 +34,7 @@ for(const type of ['printer','material'])el(type+'Form').addEventListener('submi
 document.body.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;if(b.dataset.delete){const key=b.dataset.type;if(store[key].length<=1){alert('Mantenha pelo menos um perfil.');return}if(!confirm('Remover este perfil?'))return;store[key]=store[key].filter(x=>x.id!==b.dataset.delete);renderSelectors();preset(key==='printers'?'printer':'material');renderProfiles();persisted();update()}if(b.dataset.load){const h=store.history.find(x=>x.id===b.dataset.load);if(h){store.draft={...defaults,...h.draft};renderSelectors();paintFields();update();persisted();nav('calculator')}}if(b.dataset.removeHistory){if(!confirm('Excluir cálculo do histórico?'))return;store.history=store.history.filter(x=>x.id!==b.dataset.removeHistory);persisted();renderHistory()}});
 el('exportJson').onclick=()=>{const blob=new Blob([JSON.stringify({version:1,...store},null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='3d-price-backup.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),2000)};
 el('importJson').onclick=()=>el('jsonFile').click();
-el('jsonFile').onchange=async e=>{const file=e.target.files?.[0];if(!file)return;try{if(file.size>5e6)throw Error('Arquivo muito grande');const obj=JSON.parse(await file.text());if(obj.version!==1||!Array.isArray(obj.printers)||!Array.isArray(obj.materials)||!Array.isArray(obj.history)||!obj.printers.length||!obj.materials.length)throw Error('Formato inválido');if(!confirm('Substituir os perfis e histórico atuais pelo backup?'))return;store={printers:obj.printers,materials:obj.materials,history:obj.history,draft:{...defaults,...obj.draft},dark:!!obj.dark};persisted();renderSelectors();paintFields();update();renderHistory();applyTheme()}catch(err){alert('Não foi possível importar: '+err.message)}finally{e.target.value=''}};
+el('jsonFile').onchange=async e=>{const file=e.target.files?.[0];if(!file)return;try{if(file.size>5e6)throw Error('Arquivo muito grande');const obj=JSON.parse(await file.text());if(obj.version!==1||!Array.isArray(obj.printers)||!Array.isArray(obj.materials)||!Array.isArray(obj.history)||!obj.printers.length||!obj.materials.length)throw Error('Formato inválido');if(!confirm('Substituir os perfis e histórico atuais pelo backup?'))return;store={printers:obj.printers,materials:obj.materials,history:obj.history,draft:{...defaults,...obj.draft},dark:!!obj.dark};persisted();store.printers=mergePrinterCatalog(store.printers,store.printerCatalogVersion);
+store.printerCatalogVersion=CATALOG_VERSION;renderSelectors();paintFields();update();renderHistory();applyTheme()}catch(err){alert('Não foi possível importar: '+err.message)}finally{e.target.value=''}};
 const applyTheme=()=>{document.body.classList.toggle('dark',store.dark);el('themeBtn').textContent=store.dark?'☼ Claro':'◐ Tema'};el('themeBtn').onclick=()=>{store.dark=!store.dark;applyTheme();persisted()};
-renderSelectors();paintFields();applyTheme();update();
+renderSelectors();paintFields();if(el('printerExampleNotice'))el('printerExampleNotice').hidden=!store.printers.find(p=>p.id===store.draft.printer)?.example;applyTheme();update();
