@@ -29,3 +29,13 @@ Para testes: `node --test tests/*.test.mjs`.
 
 ## Dados e privacidade
 Dados persistidos no `localStorage` do navegador. Dispositivos diferentes **não compartilham histórico**. Exporte um backup JSON para preservar ou transferir perfis e cálculos. Não registre dados sensíveis no histórico.
+
+## Instalar como aplicativo (PWA)
+O 3D Price é instalável no celular e computador, sem precisar de uma loja de aplicativos.
+- **Android/Chrome:** acesse o site e use **Instalar app** (se disponível) ou menu ⋮ → **Adicionar à tela inicial / Instalar aplicativo**.
+- **iPhone/Safari:** acesse o site no Safari, toque em **Compartilhar** → **Adicionar à Tela de Início**.
+- **Desktop/Chrome/Edge:** utilize o ícone **Instalar** na barra de endereços ou no menu do navegador.
+- **Offline:** após o primeiro carregamento online, o aplicativo pode calcular sem conexão usando os arquivos armazenados. Os dados permanecem no armazenamento local do dispositivo.
+- **Atualizações:** quando online, o navegador atualiza os arquivos; feche e abra o app se necessário.
+
+PWA não é um APK/IPA nativo. Publicação na Google Play/App Store exige etapas separadas.
