@@ -1,0 +1,11 @@
+import test from 'node:test';import assert from 'node:assert/strict';import {calculate,round2} from '../src/calculator.js';
+const base={grams:100,quantity:2,hours:4,minutes:30,spoolPrice:100,spoolGrams:1000,watts:200,kwh:1,machinePrice:2000,lifeHours:2000,maintenance:.5,consumables:2,packaging:1,failure:0,laborHours:1,laborRate:20,other:3,margin:20,marketplace:10,payment:3,taxes:2,discount:0,shipping:5};
+test('custo de lote soma componentes',()=>{const r=calculate(base);const expected=20+.9+4.5+2.25+2+20+2+3+5;assert.ok(Math.abs(r.cost-expected)<1e-8);assert.equal(round2(r.suggested),round2(expected/.65));});
+test('custo por unidade não confunde tempo total com tempo unitário',()=>{const r=calculate(base);assert.equal(r.perUnit,r.suggested/2)});
+test('provisão de falha afeta apenas custos reimprimíveis',()=>{const a=calculate(base),b=calculate({...base,failure:50});assert.ok(Math.abs(b.cost-a.cost-(20+.9+4.5+2.25+2))<1e-8)});
+test('desconto preserva margem líquida alvo',()=>{const r=calculate({...base,discount:10});assert.ok(Math.abs(r.actualMargin-20)<1e-9)});
+test('taxas somadas acima do limite geram erro',()=>assert.throws(()=>calculate({...base,margin:75}),/margem/i));
+test('falhas de 100% não geram preço infinito',()=>assert.throws(()=>calculate({...base,failure:100})));
+test('quantidade zero rejeitada',()=>assert.throws(()=>calculate({...base,quantity:0})));
+test('horas decimais e minutos somados',()=>assert.equal(calculate({...base,hours:1,minutes:30}).hours,1.5));
+test('valor zero admitido quando válido',()=>assert.equal(calculate({...base,grams:0,hours:0,minutes:0,consumables:0,packaging:0,laborHours:0,other:0,shipping:0}).cost,0));
