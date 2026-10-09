@@ -1,0 +1,31 @@
+{
+  "id": "/3d-price/",
+  "name": "3D Price — Calculadora de Impressão 3D",
+  "short_name": "3D Price",
+  "description": "Calculadora de custos e preço de venda para impressão 3D",
+  "lang": "pt-BR",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#101d32",
+  "theme_color": "#101d32",
+  "categories": [
+    "business",
+    "productivity",
+    "utilities"
+  ],
+  "icons": [
+    {
+      "src": "icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icons/icon.svg",
+      "sizes": "192x192 512x512",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
