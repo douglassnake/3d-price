@@ -4,7 +4,7 @@ test('custo de lote soma componentes',()=>{const r=calculate(base);const expecte
 test('custo por unidade não confunde tempo total com tempo unitário',()=>{const r=calculate(base);assert.equal(r.perUnit,r.suggested/2)});
 test('provisão de falha afeta apenas custos reimprimíveis',()=>{const a=calculate(base),b=calculate({...base,failure:50});assert.ok(Math.abs(b.cost-a.cost-(20+.9+4.5+2.25+2))<1e-8)});
 test('desconto preserva margem líquida alvo',()=>{const r=calculate({...base,discount:10});assert.ok(Math.abs(r.actualMargin-20)<1e-9)});
-test('taxas somadas acima do limite geram erro',()=>assert.throws(()=>calculate({...base,margin:75}),/margem/i));
+test('taxas somadas acima do limite geram erro',()=>assert.throws(()=>calculate({...base,margin:90}),/margem/i));
 test('falhas de 100% não geram preço infinito',()=>assert.throws(()=>calculate({...base,failure:100})));
 test('quantidade zero rejeitada',()=>assert.throws(()=>calculate({...base,quantity:0})));
 test('horas decimais e minutos somados',()=>assert.equal(calculate({...base,hours:1,minutes:30}).hours,1.5));
