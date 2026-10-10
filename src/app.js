@@ -19,7 +19,42 @@ function preset(type){const p=store[type==='printer'?'printers':'materials'].fin
 function paintFields(){for(const k of fields){if(el(k))el(k).value=store.draft[k]??''}}
 function read(){for(const k of fields){const input=el(k);store.draft[k]=input.type==='number'?input.value===''?NaN:Number(input.value):input.value}persisted();update()}
 let current=null;
-function update(){try{current=calculate(store.draft);el('error').textContent='';const r=current;el('suggested').textContent=money(r.suggested);el('perUnit').textContent=money(r.perUnit)+' por peça • '+r.quantity+' peça(s)';el('cost').textContent=money(r.cost);el('minimum').textContent=money(r.minimum);el('profit').textContent=money(r.profit);el('actualMargin').textContent=r.actualMargin.toFixed(1).replace('.',',')+'%';el('totalRepeat').textContent=money(r.cost);el('breakdown').innerHTML=r.items.map(i=>`<div class="cost-row"><span>${safe(i.label)}</span><strong>${money(i.value)}</strong></div><div class="bar"><div style="width:${r.cost>0?Math.max(0,Math.min(100,i.value/r.cost*100)):0}%"></div></div>`).join('');el('save').disabled=el('print').disabled=false}catch(e){current=null;el('error').textContent=e.message;['suggested','perUnit','cost','minimum','profit','actualMargin','totalRepeat'].forEach(k=>el(k).textContent='—');el('breakdown').innerHTML='';el('save').disabled=el('print').disabled=true}}
+let costDisplayFormat='value';
+const costSymbols={filament:'◉',energy:'ϟ',depreciation:'▣',maintenance:'⚙',consumables:'⬡',labor:'♙',packaging:'▱',other:'✧',shipping:'⇢'};
+function update(){
+ const profileCount=el('profileCount');
+ if(profileCount)profileCount.textContent=String(store.printers.length);
+ try{
+  current=calculate(store.draft);
+  const r=current;
+  el('error').textContent='';
+  el('suggested').textContent=money(r.suggested);
+  el('bannerPrice').textContent=money(r.suggested);
+  el('perUnit').textContent=money(r.perUnit)+' por peça • '+r.quantity+' peça(s)';
+  el('cost').textContent=money(r.cost);
+  el('minimum').textContent=money(r.minimum);
+  el('profit').textContent=money(r.profit);
+  el('actualMargin').textContent=r.actualMargin.toFixed(1).replace('.',',')+'%';
+  el('totalRepeat').textContent=money(r.cost);
+  el('breakdown').innerHTML=r.items.map(i=>{
+   const pct=r.cost>0?Math.max(0,Math.min(100,i.value/r.cost*100)):0;
+   const display=costDisplayFormat==='percent'?pct.toFixed(1).replace('.',',')+'%':money(i.value);
+   return `<div class="cost-row"><span class="cost-name"><span aria-hidden="true" class="cost-icon">${costSymbols[i.key]||'◇'}</span>${safe(i.label)}</span><strong>${display}</strong></div><div class="bar" aria-hidden="true"><div style="width:${pct}%"></div></div>`;
+  }).join('');
+  el('save').disabled=false;el('print').disabled=false;
+ }catch(e){
+  current=null;
+  el('error').textContent=e.message;
+  for(const k of ['suggested','perUnit','cost','minimum','profit','actualMargin','totalRepeat','bannerPrice'])el(k).textContent='—';
+  el('breakdown').innerHTML='';el('save').disabled=true;el('print').disabled=true;
+ }
+}
+document.querySelectorAll('[data-cost-format]').forEach(button=>button.addEventListener('click',()=>{
+ costDisplayFormat=button.dataset.costFormat;
+ document.querySelectorAll('[data-cost-format]').forEach(b=>{const active=b.dataset.costFormat===costDisplayFormat;b.classList.toggle('active',active);b.setAttribute('aria-pressed',String(active))});
+ update();
+}));
+document.querySelectorAll('[data-open-view]').forEach(button=>button.addEventListener('click',()=>nav(button.dataset.openView)));
 function nav(view){document.querySelectorAll('.view').forEach(x=>x.classList.toggle('active',x.id===view));document.querySelectorAll('.nav-item').forEach(x=>x.classList.toggle('active',x.dataset.view===view));if(view==='profiles')renderProfiles();if(view==='history')renderHistory();window.scrollTo(0,0)}
 function renderProfiles(){for(const [type,listId] of [['printers','printerList'],['materials','materialList']]){el(listId).innerHTML=store[type].map(v=>`<div class="profile-row"><div><strong>${safe(v.name)}</strong><small>${type==='printers'?money(v.price)+' • '+v.life+'h • '+v.watts+'W':money(v.price)+' / '+v.grams+'g'}</small></div><button class="delete" data-delete="${safe(v.id)}" data-type="${type}">Remover</button></div>`).join('')||'<p>Nenhum perfil cadastrado.</p>'}}
 function renderHistory(){el('historyList').innerHTML=store.history.map(h=>`<div class="history-row"><div><strong>${safe(h.draft.name||'Peça sem nome')}</strong><small>${new Date(h.created).toLocaleString('pt-BR')} • ${h.draft.quantity} unidade(s)</small></div><div><strong>${money(h.result.suggested)}</strong><div class="row-actions"><button class="secondary" data-load="${safe(h.id)}">Abrir</button><button class="delete" data-remove-history="${safe(h.id)}">Excluir</button></div></div></div>`).join('')||'<p>Nenhum cálculo salvo ainda.</p>'}
