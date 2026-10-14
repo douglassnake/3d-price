@@ -2,6 +2,8 @@ name: Testes e deploy GitHub Pages
 on:
   push:
     branches: [main]
+  pull_request:
+    branches: [main]
   workflow_dispatch:
 permissions:
   contents: read
@@ -22,9 +24,14 @@ jobs:
         run: |
           node --check src/calculator.js
           node --check src/app.js
+          node --check src/v2.js
+          node --check src/commerce.js
+          node --check src/quotations.js
+          node --check src/slicer.js
       - name: Testar motor de preços
         run: node --test tests/*.test.mjs
   deploy:
+    if: github.event_name != 'pull_request'
     needs: validate
     environment:
       name: github-pages
