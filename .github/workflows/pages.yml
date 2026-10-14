@@ -2,6 +2,8 @@ name: Testes e deploy GitHub Pages
 on:
   push:
     branches: [main]
+  pull_request:
+    branches: [main]
   workflow_dispatch:
 permissions:
   contents: read
@@ -22,9 +24,25 @@ jobs:
         run: |
           node --check src/calculator.js
           node --check src/app.js
+          node --check src/v2.js
+          node --check src/commerce.js
+          node --check src/quotations.js
+          node --check src/slicer.js
+          node --check src/lotPlanner.js
       - name: Testar motor de preços
         run: node --test tests/*.test.mjs
+      - name: Instalar navegador para testes de interface
+        run: |
+          npm install --no-save playwright@1.56.1
+          npx playwright install --with-deps chromium
+      - name: Teste integrado da interface real
+        run: |
+          python3 -m http.server 8080 --bind 127.0.0.1 >/tmp/3d-price-http.log 2>&1 &
+          sleep 2
+          node scripts/browser-smoke.mjs
+
   deploy:
+    if: github.event_name != 'pull_request'
     needs: validate
     environment:
       name: github-pages
