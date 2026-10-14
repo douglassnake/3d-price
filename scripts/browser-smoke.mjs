@@ -18,7 +18,7 @@ try{
  await page.locator('[data-mode="advanced"]').click();
  assert.ok(!(await page.locator('body').evaluate(e=>e.classList.contains('basic-mode'))));
  await page.locator('#slicerFile').setInputFiles({name:'test.gcode',mimeType:'text/plain',buffer:Buffer.from(';TIME:5400\n; filament used [g] = 32.5\nG1 X100')});
- assert.equal(await page.locator('#grams').inputValue(),'32.5');
+ await page.waitForFunction(()=>document.getElementById('grams')?.value==='32.5',{timeout:7000});
  await page.locator('#createOrder').click();
  await page.locator('#ordersList .orders-table tbody tr').waitFor();
  assert.ok((await page.locator('#ordersList').innerText()).includes('Cliente smoke'));
