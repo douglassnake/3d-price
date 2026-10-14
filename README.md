@@ -1,4 +1,8 @@
 # 3D Price
+
+## Novidades da versão 2.0
+A calculadora agora tem modos Básico e Avançado, custos fixos, modelagem, provisão de falhas separada, comparação de lotes e canais, PDF comercial sem custo interno, importação conservadora de G-code, pedidos e dashboard. Tudo funciona localmente, inclusive offline após o primeiro carregamento. Consulte [a documentação V2](docs/V2.md).
+
 Calculadora gratuita de custos e preços de venda para impressão 3D doméstica e pequenos negócios.
 
 ## Aplicativo
