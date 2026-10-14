@@ -1,6 +1,7 @@
 import {calculate,compareChannels,money} from './calculator.js';
 import {CHANNEL_PRESETS,ORDER_STATUSES,PAYMENT_STATUSES,makeOrder,orderStats,isValidOrder} from './commerce.js';
 import {parseSlicerMetadata} from './slicer.js';
+import {compareLots} from './lotPlanner.js';
 import {quoteHTML,escapeHTML} from './quotations.js';
 
 export function initV2(api){
@@ -40,6 +41,14 @@ export function initV2(api){
   renderChannels();
  });
 
+ function renderLots(){
+  const root=q('lotComparison');if(!root)return;
+  try {
+   const rows=compareLots(store().draft);
+   root.innerHTML='<div class="lot-head"><span>Peças</span><span>Lote</span><span>Preço por peça</span></div>'+
+     rows.map(item=>`<div class="lot-row"><strong>${item.quantity} un.</strong><strong>${money(item.suggested)}</strong><span>${money(item.perUnit)}</span></div>`).join('');
+  }catch(error){root.textContent='Verifique os dados do cálculo para simular lotes.';}
+ }
  function quoteData(){return {
   seller:q('quoteSeller').value,
   client:q('quoteClient').value,
@@ -178,9 +187,9 @@ export function initV2(api){
   q(type+'Form').addEventListener('submit',()=>{if(!q(type+'Form').dataset.editId)resetProfileForm(type)});
   q(type==='printer'?'cancelPrinterEdit':'cancelMaterialEdit').addEventListener('click',()=>resetProfileForm(type));
  }
- function sync(){applyQuote();applyMode();renderChannels();renderOrders();renderDashboard()}
+ function sync(){applyQuote();applyMode();renderChannels();renderLots();renderOrders();renderDashboard()}
  window.addEventListener('3dprice:navigate',event=>{if(event.detail.view==='orders')renderOrders();if(event.detail.view==='dashboard')renderDashboard()});
- window.addEventListener('3dprice:calculate',()=>renderChannels());
+ window.addEventListener('3dprice:calculate',()=>{renderChannels();renderLots()});
  window.addEventListener('3dprice:import',sync);
  sync();
 }
