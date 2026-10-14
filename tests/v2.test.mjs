@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {calculate,compareChannels} from '../src/calculator.js';
 import {parseSlicerMetadata} from '../src/slicer.js';
+import {compareLots} from '../src/lotPlanner.js';
 import {quoteHTML,escapeHTML} from '../src/quotations.js';
 import {makeOrder,orderStats,CHANNEL_PRESETS} from '../src/commerce.js';
 
@@ -67,3 +68,5 @@ test('pedidos cancelados não contam em vendas nem faturamento',()=>{
 });
 test('presets de canais são explícitos e editáveis',()=>assert.equal(CHANNEL_PRESETS.length,4));
 test('escapes HTML de texto do cliente',()=>assert.equal(escapeHTML('<"&>'), '&lt;&quot;&amp;&gt;'));
+
+test('lotes têm tempo proporcional e custo por unidade transparente',()=>{const list=compareLots(base,[1,10,50,100]);assert.equal(list.length,4);almost(list[1].hours, (base.hours+base.minutes/60)*10/base.quantity);assert.equal(list[3].quantity,100);assert.ok(list[3].suggested>list[0].suggested)});
