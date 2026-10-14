@@ -1,0 +1,47 @@
+/* 3D Price v2 — Progressive improvements, preserves treasure theme */
+[hidden]{display:none!important}
+.sr-only{position:absolute!important;left:-99999px;width:1px;height:1px;overflow:hidden}
+.mode-control{display:inline-flex;gap:3px;border:1px solid var(--line);border-radius:10px;padding:3px;background:var(--card)}
+.mode-control button{border:0;background:transparent;color:var(--text);font-size:12px;border-radius:7px;padding:8px 13px}
+.mode-control button.active{background:linear-gradient(150deg,#f1cc84,#d9a146);color:#253341;font-weight:800}
+.mode-note{font-size:11px;color:var(--muted);margin:0 0 13px}
+.basic-mode [data-advanced]{display:none!important}
+.slicer-uploader{background:var(--soft);border:1px dashed var(--accent);border-radius:10px;padding:10px 12px;display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.slicer-uploader>span{font-size:12px;font-weight:700}
+.slicer-uploader small{width:100%;color:var(--muted);font-size:11px}
+.slicer-uploader .secondary{padding:7px 10px;font-size:11px}
+#channelComparison{margin-top:17px}
+.channels-head,.channel-row{display:grid;grid-template-columns:minmax(100px,1fr) 105px minmax(130px,1fr);gap:10px;align-items:center;padding:9px 7px;border-bottom:1px solid var(--line);font-size:12px}
+.channels-head{background:var(--soft);border-radius:8px 8px 0 0;color:var(--muted);font-size:11px;font-weight:700}
+.channel-row strong:last-child{text-align:right;color:var(--accentDark)}
+.channel-row strong.invalid{color:#ad472e}
+.channel-fee input{max-width:85px;min-height:32px;height:34px;margin:0;font-size:12px;padding:6px;text-align:center}
+.quote-fields{margin-top:18px}
+.wide-action{width:100%;margin-top:15px;font-size:13px;padding:13px}
+.order-create-btn{border:1px solid #dab875;color:var(--gold-dark);background:var(--sun);width:100%;font-size:12px;font-weight:750;border-radius:8px;padding:11px;margin-top:10px}
+.order-create-btn:hover{background:#ffecd2}
+.dashboard-metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:13px;margin-bottom:19px}
+.metric-box{padding:19px;display:flex;flex-direction:column;gap:10px;min-height:105px}
+.metric-box small{font-size:12px;color:var(--muted)}
+.metric-box strong{font-size:clamp(20px,2.7vw,29px);font-weight:850;overflow-wrap:anywhere}
+.metric-line{display:flex;justify-content:space-between;align-items:center;gap:15px;border-bottom:1px solid var(--line);padding:12px 0;font-size:12px}
+.metric-line span{color:var(--muted)}
+.metric-line strong{white-space:nowrap}
+.dashboard-columns .panel>button{margin-top:17px}
+.orders-panel{overflow:hidden}
+.orders-scroll{overflow-x:auto;width:100%}
+.orders-table{width:100%;border-collapse:collapse;text-align:left;font-size:12px;min-width:720px}
+.orders-table th{color:var(--muted);background:var(--soft);padding:12px 9px}
+.orders-table td{padding:13px 9px;border-bottom:1px solid var(--line)}
+.orders-table td>small{color:var(--muted);display:block;margin-top:4px}
+.orders-table select{min-height:36px;height:36px;min-width:120px;margin:0}
+.orders-table button{white-space:nowrap;padding:8px 11px}
+.orders-summary{font-size:12px;color:var(--muted);margin-bottom:12px}
+.empty-illustration{text-align:center;min-height:220px;display:grid;place-content:center;gap:8px;color:var(--muted)}
+.empty-illustration>span{font-size:45px;color:var(--gold-dark)}
+.empty-illustration h2{color:var(--text)}
+body.dark .order-create-btn{background:#473721;border-color:#9a763b;color:#f8d695}
+body.dark .channels-head{background:#183747}
+@media(max-width:1250px){.dashboard-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:700px){.dashboard-metrics{gap:10px}.metric-box{padding:14px;min-height:90px}.metric-box strong{font-size:22px}.channels-head,.channel-row{grid-template-columns:minmax(70px,1fr) 68px minmax(94px,1fr);gap:6px;padding:8px 3px}.channel-fee input{max-width:65px}.channel-row strong:last-child{font-size:11px}.heading .row-actions{flex-wrap:wrap}}
+@media(max-width:430px){.quote-fields{grid-template-columns:1fr}.dashboard-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.metric-box strong{font-size:20px}}
