@@ -122,8 +122,13 @@ export function initV2(api){
   const r=getCurrent();if(!r){alert('Não é possível criar pedido com cálculo inválido.');return}
   const customer=prompt('Nome do cliente (opcional):',store().quote?.client||'');
   if(customer===null)return;
-  const saleChannel=store().channels?.find(x=>x.id==='direct')?'direct':CHANNEL_PRESETS[0].id;
-  const order=makeOrder(store().draft,r,{client:customer.trim().slice(0,100),channel:saleChannel},uid());
+  const saleChannel=q('orderChannel').value;
+  const channel=(store().channels||CHANNEL_PRESETS).find(c=>c.id===saleChannel);
+  if(!channel){alert('Canal de venda não encontrado.');return}
+  let orderResult;
+  try{orderResult=calculate({...store().draft,marketplace:channel.fee})}
+  catch(error){alert('Não foi possível precificar este canal: '+error.message);return}
+  const order=makeOrder({...store().draft,marketplace:channel.fee},orderResult,{client:customer.trim().slice(0,100),channel:saleChannel},uid());
   store().orders.push(order);persist();renderDashboard();renderOrders();nav('orders');
  });
  q('ordersList')?.addEventListener('change',event=>{
