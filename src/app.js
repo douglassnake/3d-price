@@ -49,6 +49,7 @@ function update(){
   for(const k of ['suggested','perUnit','cost','minimum','profit','actualMargin','totalRepeat','bannerPrice'])el(k).textContent='—';
   el('breakdown').innerHTML='';el('save').disabled=true;el('print').disabled=true;
  }
+ window.dispatchEvent(new Event('3dprice:calculate'));
 }
 document.querySelectorAll('[data-cost-format]').forEach(button=>button.addEventListener('click',()=>{
  costDisplayFormat=button.dataset.costFormat;
