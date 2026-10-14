@@ -5,7 +5,7 @@ try{
  const context=await browser.newContext({viewport:{width:1440,height:900}});
  const page=await context.newPage();
  const errors=[];page.on('pageerror',e=>errors.push(e.message));
- page.on('dialog',async d=>{if(d.type()==='prompt')await d.accept('Cliente smoke');else await d.accept()});
+ page.on('dialog',d=>{void d.accept(d.type()==='prompt'?'Cliente smoke':undefined).catch(error=>{if(!/closed|Target page/i.test(error.message))console.warn('Dialog handler:',error.message)})});
  await page.goto('http://127.0.0.1:8080/index.html',{waitUntil:'networkidle'});
  await page.locator('#suggested').waitFor();
  const first=await page.locator('#suggested').innerText();
