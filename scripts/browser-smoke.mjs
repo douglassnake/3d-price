@@ -34,7 +34,7 @@ try{
  await page.locator('#printerList [data-edit]').first().click();
  await page.locator('#printerForm [name="price"]').fill('2100');
  await page.locator('#savePrinterProfile').click();
- assert.ok((await page.locator('#printerList').innerText()).includes('R$ 2.100,00'));
+ const profileText=(await page.locator('#printerList').innerText()).replace(/\u00a0/g,' ');assert.ok(profileText.includes('R$ 2.100,00'),'Updated profile missing: '+profileText);
  const mobile=await browser.newContext({viewport:{width:390,height:844},isMobile:true,deviceScaleFactor:1});
  const m=await mobile.newPage();m.on('pageerror',e=>errors.push(e.message));
  await m.goto('http://127.0.0.1:8080/index.html',{waitUntil:'networkidle'});
