@@ -31,6 +31,16 @@ jobs:
           node --check src/lotPlanner.js
       - name: Testar motor de preços
         run: node --test tests/*.test.mjs
+      - name: Instalar navegador para testes de interface
+        run: |
+          npm install --no-save playwright@1.56.1
+          npx playwright install --with-deps chromium
+      - name: Teste integrado da interface real
+        run: |
+          python3 -m http.server 8080 --bind 127.0.0.1 >/tmp/3d-price-http.log 2>&1 &
+          sleep 2
+          node scripts/browser-smoke.mjs
+
   deploy:
     if: github.event_name != 'pull_request'
     needs: validate
