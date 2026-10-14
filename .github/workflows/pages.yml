@@ -28,6 +28,7 @@ jobs:
           node --check src/commerce.js
           node --check src/quotations.js
           node --check src/slicer.js
+          node --check src/lotPlanner.js
       - name: Testar motor de preços
         run: node --test tests/*.test.mjs
   deploy:
