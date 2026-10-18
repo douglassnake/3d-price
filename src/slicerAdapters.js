@@ -10,11 +10,11 @@ export function parseNumber(value){
  const result=Number(s);
  return Number.isFinite(result)&&result>=0?result:null;
 }
-export function parseDuration(value,{allowBareMinutes=false}={}){
+export function parseDuration(value,{allowBareMinutes=false,twoPart='reject'}={}){
  const source=String(value??'').trim();
  if(!source)return null;
  let m=source.match(/^\s*(\d{1,3}):([0-5]\d)(?::([0-5]\d(?:[.,]\d+)?))?\s*$/);
- if(m)return Number(m[1])*(m[3]?3600:60)+Number(m[2])*(m[3]?60:1)+(m[3]?Number(m[3].replace(',','.')):0);
+ if(m){if(!m[3]&&twoPart==='reject')return null;return Number(m[1])*(m[3]||twoPart==='h:mm'?3600:60)+Number(m[2])*(m[3]||twoPart==='h:mm'?60:1)+(m[3]?Number(m[3].replace(',','.')):0)}
  const suffix=/(\d+(?:[.,]\d+)?)\s*(days?|dias?|d|hours?|horas?|hrs?|h|minutes?|mins?|minutos?|min|m|seconds?|segundos?|secs?|sec|s)\b/gi;
  let total=0,last=0,found=false;
  while((m=suffix.exec(source))){const n=parseNumber(m[1]);if(n===null)return null;const unit=m[2].toLowerCase();const mult=/^(?:d|day|dia)/.test(unit)?86400:/^(?:h|hour|hora|hr)/.test(unit)?3600:/^(?:m|min)/.test(unit)?60:1;total+=n*mult;last=suffix.lastIndex;found=true;}
@@ -119,7 +119,7 @@ export function parseGrabCADReport(source){
     const type=types[i],raw=row[i]??'';
     if(!type)continue;
     if(type==='duration'){
-     const value=parseDuration(raw,{allowBareMinutes:/minutes|minutos/.test(clean(rows[headerIndex][i]))});
+     const value=parseDuration(raw,{allowBareMinutes:/minutes|minutos/.test(clean(rows[headerIndex][i])),twoPart:/hh\s*mm|hora|hour/.test(clean(rows[headerIndex][i]))?'h:mm':'reject'});
      if(value!==null){if(selected.length===1)result.seconds=value;else warnings.push('Tempo por peça/lote não foi somado: imprima simultaneamente? Informe o tempo total estimado da bandeja.')}
     }else if(type==='volume')volumes.push({column:rows[headerIndex][i],value:raw});
     else if(type==='quantity'){const count=parseNumber(raw);if(selected.length===1&&count!==null)result.quantity=count;}
@@ -134,8 +134,10 @@ export function parseGrabCADReport(source){
  for(const line of text.split(/\r?\n/).slice(0,5000)){
   const m=line.trim().match(/^(.*?)\s*[:=\t]\s*(.+)$/);
   if(!m)continue;
-  const key=clean(m[1]),val=m[2].trim(),type=colType(m[1]);
-  if(type==='duration'){const sec=parseDuration(val,{allowBareMinutes:/minutes|minutos/.test(key)});if(sec!==null){result.seconds=sec;fields.push('seconds')}}
+  const key=clean(m[1]),val=m[2].trim();let type=colType(m[1]);
+  if(!type&&/\b(?:material|filament|filamento|support|suporte)\b/.test(key)&&/\d\s*g\b/i.test(val))type=/support|suporte/.test(key)?'supportGrams':/model|modelo/.test(key)?'modelGrams':'grams';
+  if(!type&&/\b(?:material|volume|support|suporte)\b/.test(key)&&/\d\s*(?:cm[³3]|cc|in[³3])\b/i.test(val))type='volume';
+  if(type==='duration'){const sec=parseDuration(val,{allowBareMinutes:/minutes|minutos/.test(key),twoPart:/hh\s*mm|hora|hour/.test(key)?'h:mm':'reject'});if(sec!==null){result.seconds=sec;fields.push('seconds')}}
   else if(type==='volume')volumes.push({column:m[1],value:val});
   else if(type==='quantity'){const n=parseNumber(val);if(n!==null){result.quantity=n;fields.push('quantity')}}
   else if(type){const value=parseNumber((val.match(/[\d.,]+/)||[])[0]);if(value!==null){result[type]=value;fields.push(type)}}
