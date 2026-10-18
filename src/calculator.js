@@ -19,6 +19,7 @@ export function calculate(x) {
  const supportGrams=optional(x,'supportGrams',0);
  const supportPriceKg=optional(x,'supportPriceKg',0);
  if(!Number.isFinite(supportGrams)||supportGrams<0||!Number.isFinite(supportPriceKg)||supportPriceKg<0)throw Error('Peso e preço do material de suporte devem ser válidos.');
+ if(supportGrams>0&&supportPriceKg===0)throw Error('Informe o preço do material de suporte em R$/kg antes de calcular.');
  const fixedMonthly=optional(x,'fixedMonthly',0);
  const productiveHours=optional(x,'productiveHours',160);
  const modelingHours=optional(x,'modelingHours',0);
