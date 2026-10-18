@@ -21,6 +21,46 @@ try{
  await page.locator('#slicerPreview').waitFor({state:'visible'});
  await page.locator('#slicerApply').click();
  await page.waitForFunction(()=>document.getElementById('grams')?.value==='32.5',{timeout:7000});
+ await page.locator('#slicerPasteDetails summary').click();
+ await page.locator('#slicerPasteText').fill('GrabCAD Print\\nModel Material: 40 g\\nSupport Material: 10 g\\nBuild Time: 4h 20m');
+ await page.locator('#slicerParsePaste').click();
+ await page.locator('#slicerPreview').waitFor({state:'visible'});
+ await page.locator('#slicerPieces').fill('2');
+ await page.locator('#slicerApply').click();
+ await page.waitForFunction(()=>document.getElementById('grams')?.value==='20');
+ assert.equal(await page.locator('#quantity').inputValue(),'2');
+ assert.equal(await page.locator('#supportGrams').inputValue(),'10');
+ await page.locator('#supportPriceKg').fill('300');
+ await page.waitForFunction(()=>document.getElementById('suggested')?.textContent?.includes('R
+ await page.locator('#createOrder').click();
+ await page.locator('#ordersList .orders-table tbody tr').waitFor();
+ assert.ok((await page.locator('#ordersList').innerText()).includes('Cliente smoke'));
+ await page.locator('[data-order-status]').selectOption('DELIVERED');
+ await page.locator('[data-order-payment]').selectOption('PAID');
+ await page.locator('[data-view="dashboard"]').click();
+ assert.equal((await page.locator('#dashOrders').innerText()).trim(),'1');
+ assert.equal((await page.locator('#dashDelivered').innerText()).trim(),'1');
+ await page.reload({waitUntil:'networkidle'});
+ await page.locator('[data-view="dashboard"]').click();
+ assert.equal((await page.locator('#dashOrders').innerText()).trim(),'1','order must survive reload');
+ await page.locator('[data-view="profiles"]').click();
+ await page.locator('#printerList [data-edit]').first().click();
+ await page.locator('#printerForm [name="price"]').fill('2100');
+ await page.locator('#savePrinterProfile').click();
+ const profileText=(await page.locator('#printerList').innerText()).replace(/\u00a0/g,' ');assert.ok(profileText.includes('R$ 2.100,00'),'Updated profile missing: '+profileText);
+ const mobile=await browser.newContext({viewport:{width:390,height:844},isMobile:true,deviceScaleFactor:1});
+ const m=await mobile.newPage();m.on('pageerror',e=>errors.push(e.message));
+ await m.goto('http://127.0.0.1:8080/index.html',{waitUntil:'networkidle'});
+ assert.ok(await m.locator('#suggested').isVisible());
+ const overflow=await m.evaluate(()=>({scroll:document.documentElement.scrollWidth,viewport:window.innerWidth}));
+ assert.ok(overflow.scroll<=overflow.viewport+2,'horizontal viewport overflow: '+JSON.stringify(overflow));
+ await mobile.close();
+ assert.deepEqual(errors,[],'browser page errors');
+ console.log('Browser smoke OK: pricing, G-code & GrabCAD, support, modes, orders, dashboard, persistence, profile edit, mobile.');
+ await context.close();
+}finally{await browser.close()}
+));
+ 
  await page.locator('#createOrder').click();
  await page.locator('#ordersList .orders-table tbody tr').waitFor();
  assert.ok((await page.locator('#ordersList').innerText()).includes('Cliente smoke'));
