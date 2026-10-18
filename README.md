@@ -1,5 +1,8 @@
 # 3D Price
 
+## Importação de fatiadores e GrabCAD Print
+O 3D Price importa metadados de **Cura, PrusaSlicer, OrcaSlicer e Bambu Studio**, além de relatórios de **GrabCAD Print**. Compatível com G-code, 3MF fatiado e CSV/TSV/XLSX de estimativas; o GrabCAD Print Standard também pode ser utilizado copiando o texto da estimativa. Todos os arquivos são processados localmente, com prévia e confirmação. Consulte [o manual dos fatiadores](docs/INTEGRACAO_FATIADORES.md).
+
 ## Novidades da versão 2.0
 A calculadora agora tem modos Básico e Avançado, custos fixos, modelagem, provisão de falhas separada, comparação de lotes e canais, PDF comercial sem custo interno, importação conservadora de G-code, pedidos e dashboard. Tudo funciona localmente, inclusive offline após o primeiro carregamento. Consulte [a documentação V2](docs/V2.md).
 
