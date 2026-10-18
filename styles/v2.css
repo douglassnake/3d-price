@@ -49,3 +49,33 @@ body.dark .channels-head{background:#183747}
 .order-controls{margin-top:11px;display:flex;gap:10px;align-items:end}.order-controls label{font-size:11px;flex:1;color:var(--muted);font-weight:700}.order-controls select{min-height:39px;height:39px;margin-top:3px}.order-controls .order-create-btn{flex:1.4;margin:0;min-height:40px}@media(max-width:580px){.order-controls{flex-direction:column;align-items:stretch}.order-controls label{width:100%}}
 
 .lot-head,.lot-row{display:grid;grid-template-columns:60px 1fr 1fr;gap:8px;align-items:center;padding:10px 5px;border-bottom:1px solid var(--line);font-size:12px}.lot-head{background:var(--soft);font-weight:700;color:var(--muted);margin-top:13px;border-radius:7px 7px 0 0}.lot-row strong:last-of-type,.lot-row span{text-align:right}.lot-row span{color:var(--gold-dark);font-weight:800}
+
+/* Importadores FDM + GrabCAD Print */
+.slicer-integration{display:block;min-width:0}
+.slicer-header{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.slicer-header strong{display:block;font-size:14px;color:var(--text)}
+.slicer-header small{font-size:11px;display:block;color:var(--muted)}
+.slicer-badge{font-size:10px;font-weight:750;color:#0b685d;white-space:nowrap;background:#d8f5e9;padding:5px 9px;border-radius:15px}
+.slicer-brands{display:flex;flex-wrap:wrap;gap:5px;margin:13px 0}
+.slicer-brands span{font-size:10px;line-height:1.2;border:1px solid #cadfde;color:#155665;background:#eef6f4;border-radius:20px;padding:5px 8px}
+.slicer-controls{display:flex;align-items:end;gap:10px;margin:10px 0 13px}
+.slicer-controls label{flex:1;font-size:11px;font-weight:700;min-width:0}
+.slicer-controls select{font-size:12px}
+.slicer-controls button{font-size:12px;min-height:42px;white-space:nowrap}
+#slicerPasteDetails{border-top:1px solid var(--line);padding:12px 0}
+#slicerPasteDetails summary{font-size:12px;color:var(--accentDark);font-weight:750;cursor:pointer}
+.slicer-paste-label{display:block;margin-top:11px;font-size:11px}
+.slicer-paste-label textarea{display:block;resize:vertical;width:100%;margin:6px 0 8px;padding:10px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--text);font:12px/1.5 ui-monospace,monospace}
+.slicer-preview{border:1px solid #d7b46a;background:var(--card);border-radius:10px;padding:15px;margin-top:10px;box-shadow:0 3px 12px #a87c3130}
+.slicer-preview>strong{font-size:12px;color:var(--text)}
+.slicer-data-row{display:flex;justify-content:space-between;gap:12px;font-size:12px;padding:6px 0;border-bottom:1px solid var(--line)}
+.slicer-data-row strong{color:var(--text);text-align:right;overflow-wrap:anywhere}
+.slicer-warnings p{font-size:11px;color:#9a5a16;line-height:1.45;margin:7px 0}
+.slicer-qty{display:block;font-size:11px;font-weight:750;margin:10px 0}
+.slicer-qty input{max-width:145px;display:block}
+.slicer-actions{display:flex;gap:8px}
+.slicer-actions button{font-size:12px;flex:1}
+body.dark .slicer-brands span{background:#183840;border-color:#366673;color:#aee0d8}
+body.dark .slicer-badge{background:#163e34;color:#b4e9c8}
+body.dark .slicer-warnings p{color:#f5c16d}
+@media(max-width:590px){.slicer-controls{flex-direction:column;align-items:stretch}.slicer-controls button{width:100%}.slicer-data-row{font-size:11px}}
