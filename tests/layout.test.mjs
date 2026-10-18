@@ -27,5 +27,5 @@ test('valores visuais usam motor de cálculo, sem montantes de demonstração',(
 });
 test('PWA guarda o novo tema no cache offline',()=>{
  assert.ok(worker.includes('styles/treasure.css?v=20261009-1'));
- assert.match(worker,/3d-price-pwa-v6-slicers/);
+ assert.match(worker,/3d-price-pwa-v7-slicers-zip/);
 });
