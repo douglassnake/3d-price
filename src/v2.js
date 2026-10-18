@@ -1,6 +1,6 @@
 import {calculate,compareChannels,money} from './calculator.js';
 import {CHANNEL_PRESETS,ORDER_STATUSES,PAYMENT_STATUSES,makeOrder,orderStats,isValidOrder} from './commerce.js';
-import {parseSlicerMetadata} from './slicer.js';
+import {initSlicerImport} from './slicerImportUI.js';
 import {compareLots} from './lotPlanner.js';
 import {quoteHTML,escapeHTML} from './quotations.js';
 
@@ -74,25 +74,7 @@ export function initV2(api){
   printPage(quoteHTML(store().draft,r,quoteData()));
  });
  // Keep the legacy internal report button; the client-facing PDF intentionally hides cost and margin.
- q('slicerButton')?.addEventListener('click',()=>q('slicerFile').click());
- q('slicerFile')?.addEventListener('change',async event=>{
-  const file=event.target.files?.[0];if(!file)return;
-  const message=q('slicerMessage');
-  try{
-   const head=await file.slice(0,1024*1024).text();
-   const tail=file.size>1024*1024?await file.slice(-512*1024).text():'';
-   const result=parseSlicerMetadata(head+'\n'+tail);
-   if(result.grams===null&&result.seconds===null){message.textContent='Não encontrei peso em gramas nem tempo com unidade reconhecida neste arquivo. Confira no fatiador.';return}
-   const parts=[result.grams!==null?`Filamento: ${result.grams} g`:'',
-    result.seconds!==null?`Tempo: ${result.hours}h ${result.minutes}min`:''].filter(Boolean);
-   if(!confirm('Dados encontrados no G-code:\n'+parts.join('\n')+'\n\nAplicar ao cálculo atual? Verifique se o peso é por peça e o tempo corresponde ao lote.'))return;
-   if(result.grams!==null)store().draft.grams=result.grams;
-   if(result.seconds!==null){store().draft.hours=result.hours;store().draft.minutes=result.minutes}
-   paintFields();persist();update();
-   message.textContent='Importado de '+file.name+': '+parts.join(' • ')+'. Confira quantidade e suportes.';
-  }catch(error){message.textContent='Falha na importação: '+error.message}
-  finally{event.target.value=''}
- });
+ initSlicerImport({el,getStore,persist,paintFields,update});
 
  function renderOrders(){
   const target=q('ordersList');if(!target)return;
