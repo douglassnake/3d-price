@@ -16,6 +16,10 @@ export function calculate(x) {
  !Number.isFinite(n('spoolGrams'))||n('spoolGrams')<=0||
  !Number.isFinite(n('lifeHours'))||n('lifeHours')<=0||n('minutes')>=60)
  throw Error('Verifique quantidades, horas e valores: não podem ser negativos ou inválidos.');
+ const supportGrams=optional(x,'supportGrams',0);
+ const supportPriceKg=optional(x,'supportPriceKg',0);
+ if(!Number.isFinite(supportGrams)||supportGrams<0||!Number.isFinite(supportPriceKg)||supportPriceKg<0)throw Error('Peso e preço do material de suporte devem ser válidos.');
+ if(supportGrams>0&&supportPriceKg===0)throw Error('Informe o preço do material de suporte em R$/kg antes de calcular.');
  const fixedMonthly=optional(x,'fixedMonthly',0);
  const productiveHours=optional(x,'productiveHours',160);
  const modelingHours=optional(x,'modelingHours',0);
@@ -32,7 +36,8 @@ export function calculate(x) {
   energy:n('watts')/1000*hours*n('kwh'),
   depreciation:n('machinePrice')/n('lifeHours')*hours,
   maintenance:n('maintenance')*hours,
-  consumables:n('consumables')
+  consumables:n('consumables'),
+  support:supportGrams/1000*supportPriceKg
  };
  const production=Object.values(raw).reduce((a,b)=>a+b,0);
  const retry=1/(1-f), reserve=production*(retry-1);
@@ -43,6 +48,7 @@ export function calculate(x) {
   {key:'depreciation',label:'Depreciação da impressora',value:raw.depreciation},
   {key:'maintenance',label:'Manutenção',value:raw.maintenance},
   {key:'consumables',label:'Consumíveis de impressão',value:raw.consumables},
+  {key:'support',label:'Material de suporte',value:raw.support},
   {key:'failureReserve',label:'Provisão para falhas',value:reserve},
   {key:'labor',label:'Mão de obra',value:n('laborHours')*n('laborRate')},
   {key:'modeling',label:'Modelagem 3D',value:modelingHours*n('laborRate')},
@@ -55,7 +61,7 @@ export function calculate(x) {
  const minimum=cost/((1-d)*(1-fees));
  const suggested=cost/((1-d)*(1-fees-margin));
  const received=suggested*(1-d), profit=received*(1-fees)-cost;
- return {items,cost,minimum,suggested,perUnit:suggested/quantity,profit,actualMargin:received>0?profit/received*100:0,quantity,hours,fees,discount:d,expectedAttempts:retry,productionCost:production,failureReserve:reserve,fixedAllocated,netRevenue:received*(1-fees),revenueAfterDiscount:received};
+ return {items,cost,minimum,suggested,perUnit:suggested/quantity,profit,actualMargin:received>0?profit/received*100:0,quantity,hours,fees,discount:d,expectedAttempts:retry,productionCost:production,failureReserve:reserve,supportCost:raw.support,fixedAllocated,netRevenue:received*(1-fees),revenueAfterDiscount:received};
 }
 
 export function compareChannels(input, channels) {

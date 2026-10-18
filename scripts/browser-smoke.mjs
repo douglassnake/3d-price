@@ -18,7 +18,20 @@ try{
  await page.locator('[data-mode="advanced"]').click();
  assert.ok(!(await page.locator('body').evaluate(e=>e.classList.contains('basic-mode'))));
  await page.locator('#slicerFile').setInputFiles({name:'test.gcode',mimeType:'text/plain',buffer:Buffer.from(';TIME:5400\n; filament used [g] = 32.5\nG1 X100')});
+ await page.locator('#slicerPreview').waitFor({state:'visible'});
+ await page.locator('#slicerApply').click();
  await page.waitForFunction(()=>document.getElementById('grams')?.value==='32.5',{timeout:7000});
+ await page.locator('#slicerPasteDetails summary').click();
+ await page.locator('#slicerPasteText').fill(['GrabCAD Print','Model Material: 40 g','Support Material: 10 g','Build Time: 4h 20m'].join(String.fromCharCode(10)));
+ await page.locator('#slicerParsePaste').click();
+ await page.locator('#slicerPreview').waitFor({state:'visible'});
+ await page.locator('#slicerPieces').fill('2');
+ await page.locator('#slicerApply').click();
+ await page.waitForFunction(()=>document.getElementById('grams')?.value==='20');
+ assert.equal(await page.locator('#quantity').inputValue(),'2');
+ assert.equal(await page.locator('#supportGrams').inputValue(),'10');
+ await page.locator('#supportPriceKg').fill('300');
+ await page.waitForFunction(()=>document.getElementById('save')?.disabled===false);
  await page.locator('#createOrder').click();
  await page.locator('#ordersList .orders-table tbody tr').waitFor();
  assert.ok((await page.locator('#ordersList').innerText()).includes('Cliente smoke'));
@@ -43,6 +56,6 @@ try{
  assert.ok(overflow.scroll<=overflow.viewport+2,'horizontal viewport overflow: '+JSON.stringify(overflow));
  await mobile.close();
  assert.deepEqual(errors,[],'browser page errors');
- console.log('Browser smoke OK: pricing, slicer, modes, orders, dashboard, local persistence, profile edit, mobile.');
+ console.log('Browser smoke OK: pricing, G-code & GrabCAD, support, modes, orders, dashboard, persistence, profile edit, mobile.');
  await context.close();
 }finally{await browser.close()}

@@ -4,7 +4,7 @@ import {initV2} from './v2.js';
 const KEY='3d-price-v1';
 const defaultPrinters=[{id:'p1',name:'Impressora doméstica (exemplo)',price:2500,life:4000,watts:120,maintenance:.35,example:true}];
 const defaultMaterials=[{id:'m1',name:'PLA (exemplo)',price:90,grams:1000},{id:'m2',name:'PETG (exemplo)',price:110,grams:1000},{id:'m3',name:'ABS (exemplo)',price:100,grams:1000},{id:'m4',name:'TPU (exemplo)',price:150,grams:1000}];
-const defaults={name:'',printer:'p1',material:'m1',grams:45,quantity:1,hours:3,minutes:0,spoolPrice:90,spoolGrams:1000,watts:120,kwh:.95,machinePrice:2500,lifeHours:4000,maintenance:.35,consumables:1,packaging:2,failure:8,laborHours:.35,laborRate:25,other:0,margin:25,marketplace:0,payment:4,taxes:0,discount:0,shipping:0,fixedMonthly:0,productiveHours:160,modelingHours:0};
+const defaults={name:'',printer:'p1',material:'m1',grams:45,quantity:1,hours:3,minutes:0,spoolPrice:90,spoolGrams:1000,watts:120,kwh:.95,machinePrice:2500,lifeHours:4000,maintenance:.35,consumables:1,packaging:2,failure:8,laborHours:.35,laborRate:25,other:0,margin:25,marketplace:0,payment:4,taxes:0,discount:0,shipping:0,fixedMonthly:0,productiveHours:160,modelingHours:0,supportGrams:0,supportPriceKg:0};
 const el=id=>document.getElementById(id);
 let store;
 try{store=JSON.parse(localStorage.getItem(KEY)||'null')}catch{store=null}
@@ -21,7 +21,7 @@ function paintFields(){for(const k of fields){if(el(k))el(k).value=store.draft[k
 function read(){for(const k of fields){const input=el(k);store.draft[k]=input.type==='number'?input.value===''?NaN:Number(input.value):input.value}persisted();update()}
 let current=null;
 let costDisplayFormat='value';
-const costSymbols={filament:'◉',energy:'ϟ',depreciation:'▣',maintenance:'⚙',consumables:'⬡',failureReserve:'⚠',labor:'♙',modeling:'✎',overhead:'▥',packaging:'▱',other:'✧',shipping:'⇢'};
+const costSymbols={filament:'◉',energy:'ϟ',depreciation:'▣',maintenance:'⚙',consumables:'⬡',failureReserve:'⚠',support:'◇',labor:'♙',modeling:'✎',overhead:'▥',packaging:'▱',other:'✧',shipping:'⇢'};
 function update(){
  const profileCount=el('profileCount');
  if(profileCount)profileCount.textContent=String(store.printers.length);
