@@ -22,7 +22,7 @@ try{
  await page.locator('#slicerApply').click();
  await page.waitForFunction(()=>document.getElementById('grams')?.value==='32.5',{timeout:7000});
  await page.locator('#slicerPasteDetails summary').click();
- await page.locator('#slicerPasteText').fill('GrabCAD Print\\nModel Material: 40 g\\nSupport Material: 10 g\\nBuild Time: 4h 20m');
+ await page.locator('#slicerPasteText').fill(['GrabCAD Print','Model Material: 40 g','Support Material: 10 g','Build Time: 4h 20m'].join(String.fromCharCode(10)));
  await page.locator('#slicerParsePaste').click();
  await page.locator('#slicerPreview').waitFor({state:'visible'});
  await page.locator('#slicerPieces').fill('2');
@@ -31,7 +31,7 @@ try{
  assert.equal(await page.locator('#quantity').inputValue(),'2');
  assert.equal(await page.locator('#supportGrams').inputValue(),'10');
  await page.locator('#supportPriceKg').fill('300');
- await page.waitForFunction(()=>document.getElementById('suggested')?.textContent?.includes('R
+ await page.waitForFunction(()=>document.getElementById('save')?.disabled===false);
  await page.locator('#createOrder').click();
  await page.locator('#ordersList .orders-table tbody tr').waitFor();
  assert.ok((await page.locator('#ordersList').innerText()).includes('Cliente smoke'));
