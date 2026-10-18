@@ -31,7 +31,7 @@ export function identifySlicer(text){
  const s=String(text||'').slice(0,200000).toLowerCase();
  if(/\bgrabcad(?:\s+print)?\b|stratasys|tray summary|build report/.test(s))return 'GrabCAD Print';
  if(/\borca(?:slicer)?\b/.test(s))return 'OrcaSlicer';
- if(/\bbambu(?:\s+studio|slicer)\b/.test(s))return 'Bambu Studio';
+ if(/\bbambu(?:\s*studio|\s*slicer)\b/.test(s))return 'Bambu Studio';
  if(/\bprusa(?:slicer)?\b/.test(s))return 'PrusaSlicer';
  if(/\bcura(?:_steamengine|engine)?\b/.test(s))return 'Ultimaker Cura';
  return 'Não identificado';
