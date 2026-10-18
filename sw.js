@@ -1,6 +1,6 @@
 /* 3D Price PWA: cache offline somente arquivos do próprio app. */
-const VERSION='3d-price-pwa-v5-business';
-const CORE=['./','./index.html','./styles.css','./styles/treasure.css?v=20261009-1','./styles/v2.css?v=2-1','./src/app.js?v=20261013-v2','./src/calculator.js','./src/v2.js','./src/commerce.js','./src/quotations.js','./src/slicer.js','./src/lotPlanner.js','./src/printerCatalog.js','./manifest.webmanifest','./icons/icon.svg','./icons/icon-192.png','./icons/icon-512.png'];
+const VERSION='3d-price-pwa-v6-slicers';
+const CORE=['./','./index.html','./styles.css','./styles/treasure.css?v=20261009-1','./styles/v2.css?v=2-2','./src/app.js?v=20261017-slicers1','./src/calculator.js','./src/v2.js','./src/commerce.js','./src/quotations.js','./src/slicer.js','./src/slicerAdapters.js','./src/slicerImportUI.js','./src/lotPlanner.js','./src/printerCatalog.js','./manifest.webmanifest','./icons/icon.svg','./icons/icon-192.png','./icons/icon-512.png'];
 self.addEventListener('install',event=>{event.waitUntil(caches.open(VERSION).then(cache=>cache.addAll(CORE)).then(()=>self.skipWaiting()))});
 self.addEventListener('activate',event=>{event.waitUntil((async()=>{for(const key of await caches.keys()){if(key.startsWith('3d-price-pwa-')&&key!==VERSION)await caches.delete(key)}await self.clients.claim()})())});
 self.addEventListener('fetch',event=>{
