@@ -1,7 +1,7 @@
 name: Testes e deploy GitHub Pages
 on:
   push:
-    branches: [main]
+    branches: [main, 'feature/**']
   pull_request:
     branches: [main]
   workflow_dispatch:
@@ -28,6 +28,9 @@ jobs:
           node --check src/commerce.js
           node --check src/quotations.js
           node --check src/slicer.js
+          node --check src/slicerAdapters.js
+          node --check src/slicerImportUI.js
+          node --check src/zipImport.js
           node --check src/lotPlanner.js
       - name: Testar motor de preços
         run: node --test tests/*.test.mjs
@@ -42,7 +45,7 @@ jobs:
           node scripts/browser-smoke.mjs
 
   deploy:
-    if: github.event_name != 'pull_request'
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
     needs: validate
     environment:
       name: github-pages
