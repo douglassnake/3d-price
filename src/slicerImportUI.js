@@ -81,13 +81,17 @@ export function initSlicerImport({el,getStore,persist,paintFields,update}){
   }
   if(r.seconds!==null){draft.hours=r.hours;draft.minutes=r.minutes}
   draft.slicerSource={slicer:r.slicer,fileName,importedAt:new Date().toISOString(),fields:r.fields,confidence:r.confidence};
+  if(draft.supportGrams>0&&!(Number(draft.supportPriceKg)>0)){
+   getStore().uiMode='advanced';
+   window.dispatchEvent(new Event('3dprice:import'));
+  }
   paintFields();persist();update();
   const fields=[];
   if(r.grams!==null)fields.push('peso '+fmt(draft.grams)+' g/peça × '+count);
   if(r.seconds!==null)fields.push('tempo '+r.hours+'h '+r.minutes+'min');
   if(draft.supportGrams>0)fields.push('suporte '+fmt(draft.supportGrams)+' g');
   close();
-  setMessage('Aplicado: '+fields.join(' • ')+'. Revise o preço dos materiais antes da venda.');
+  setMessage('Aplicado: '+fields.join(' • ')+'. '+(draft.supportGrams>0&&!(Number(draft.supportPriceKg)>0)?'ATENÇÃO: defina o preço do suporte em Custos operacionais para liberar a precificação.':'Revise o preço dos materiais antes da venda.'));
  });
  q('slicerCancel').addEventListener('click',()=>{close();setMessage('Importação cancelada. Cálculo preservado.')});
 }
