@@ -1,4 +1,5 @@
 import {parseSlicerImport} from './slicerAdapters.js';
+import {parse3mfFile,parseGrabCADXlsxFile} from './zipImport.js';
 import {escapeHTML} from './quotations.js';
 const fmt=n=>new Intl.NumberFormat('pt-BR',{maximumFractionDigits:3}).format(n);
 const summary = r=>{
@@ -25,6 +26,9 @@ export function initSlicerImport({el,getStore,persist,paintFields,update}){
  const analyze=(text,{fileName='',format='auto'}={})=>{
   close();
   const result=parseSlicerImport(text,{fileName,format});
+  showResult(result,fileName);
+ };
+ const showResult=(result,fileName='')=>{
   if(result.grams===null&&result.seconds===null&&!(result.volumes?.length)){
    setMessage('Nenhum peso em gramas ou tempo reconhecido. Verifique o formato ou copie o resumo do fatiador.');
    return;
@@ -49,13 +53,19 @@ export function initSlicerImport({el,getStore,persist,paintFields,update}){
   try{
    const format=q('slicerFormat').value;
    const ext=file.name.toLowerCase().split('.').at(-1);
-   if(!['gcode','gco','txt','csv','tsv'].includes(ext))throw Error('Formato não aceito. Use G-code, CSV/TSV ou texto. Para XLSX do GrabCAD, exporte ou salve como CSV.');
+   if(!['gcode','gco','txt','csv','tsv','3mf','xlsx'].includes(ext))throw Error('Formato não aceito: use G-code, 3MF fatiado, relatório CSV/TSV/XLSX ou texto.');
    if(file.size>200*1024*1024)throw Error('Arquivo acima do limite de 200 MB. Exporte um relatório menor.');
-   const text=ext==='gcode'||ext==='gco'
-    ?await file.slice(0,400*1024).text()+'\n'+await file.slice(Math.max(0,file.size-1400*1024)).text()
-    :await file.slice(0,4*1024*1024).text();
-   const resolvedFormat=format==='auto'&&['csv','tsv'].includes(ext)?'grabcad':format;
-   analyze(text,{fileName:file.name,format:resolvedFormat});
+   if(ext==='3mf'||ext==='xlsx'){
+    close();
+    const result=ext==='3mf'?await parse3mfFile(file):await parseGrabCADXlsxFile(file);
+    showResult(result,file.name);
+   }else{
+    const text=ext==='gcode'||ext==='gco'
+     ?await file.slice(0,400*1024).text()+'\n'+await file.slice(Math.max(0,file.size-1400*1024)).text()
+     :await file.slice(0,4*1024*1024).text();
+    const resolvedFormat=format==='auto'&&['csv','tsv'].includes(ext)?'grabcad':format;
+    analyze(text,{fileName:file.name,format:resolvedFormat});
+   }
   }catch(error){close();setMessage('Erro: '+error.message)}
   finally{event.target.value=''}
  });
