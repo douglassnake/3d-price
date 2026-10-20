@@ -27,5 +27,19 @@ test('valores visuais usam motor de cálculo, sem montantes de demonstração',(
 });
 test('PWA guarda o novo tema no cache offline',()=>{
  assert.ok(worker.includes('styles/treasure.css?v=20261009-1'));
- assert.match(worker,/3d-price-pwa-v7-slicers-zip/);
+ assert.match(worker,/3d-price-pwa-v8-timeline/);
+});
+
+test('navegação em linha do tempo tem 6 etapas e mantém controles canônicos',()=>{
+ const timeline=read('src/timeline.js');
+ assert.match(timeline,/Iniciar projeto/);
+ assert.match(timeline,/Anexar arquivo/);
+ assert.match(timeline,/Configurar impressão/);
+ assert.match(timeline,/Calcular custos/);
+ assert.match(timeline,/Definir preço/);
+ assert.match(timeline,/Finalizar/);
+ assert.ok(timeline.includes("moveInput('name',identity)"));
+ assert.ok(timeline.includes("required('quotePanel')"));
+ assert.ok(timeline.includes("required('slicerFile')"));
+ assert.ok(read('sw.js').includes('styles/timeline.css'));
 });
