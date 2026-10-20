@@ -14,7 +14,7 @@ concurrency:
   cancel-in-progress: true
 jobs:
   validate:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -24,6 +24,8 @@ jobs:
         run: |
           node --check src/calculator.js
           node --check src/app.js
+          node --check src/timeline.js
+          node --check scripts/browser-smoke.mjs
           node --check src/v2.js
           node --check src/commerce.js
           node --check src/quotations.js
