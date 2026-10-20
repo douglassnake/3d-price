@@ -9,7 +9,7 @@ try{
  await page.goto('http://127.0.0.1:8080/index.html',{waitUntil:'networkidle'});
  await page.locator('.timeline-node').first().waitFor();
  assert.equal(await page.locator('.timeline-node').count(),6);
- assert.equal(await page.locator('.timeline-stage:visible').count(),1);
+ assert.equal(await page.locator('.timeline-stage:visible').count(),1,'Erros no navegador: '+errors.join(' | ')+'; passo ativo: '+await page.locator('.timeline-node[aria-current="step"]').count());
  assert.equal(await page.locator('#timelineCount').innerText(),'Etapa 1 de 6');
  await page.locator('#name').fill('Suporte 3D');
  await page.locator('#quoteClient').fill('Cliente smoke');
