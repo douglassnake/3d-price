@@ -24,6 +24,8 @@ jobs:
         run: |
           node --check src/calculator.js
           node --check src/app.js
+          node --check src/timeline.js
+          node --check scripts/browser-smoke.mjs
           node --check src/v2.js
           node --check src/commerce.js
           node --check src/quotations.js
