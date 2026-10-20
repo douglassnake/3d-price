@@ -53,7 +53,7 @@ export function initTimeline({getStore,persist,getCurrent}){
   areas.push(content);
  });
  host.append(header,timeline,deck);
- columns.replaceWith(host);
+ // Mover os controles ainda conectados; somente depois substituir a coluna.
 
  // 1. Criação do projeto.
  const intro=card('Qual peça vamos produzir?','Nomeie o projeto e informe o cliente, se já existir.','✦');
@@ -107,6 +107,8 @@ export function initTimeline({getStore,persist,getCurrent}){
  finish.append(finishActions,orderControls);areas[5].append(finish);
  const bottom=root.querySelector('.bottom-grid');if(bottom)areas[5].append(bottom);
  areas[5].append(make('p','timeline-privacy','Os anexos são analisados localmente. Seus dados permanecem no navegador deste dispositivo.'));
+
+ columns.replaceWith(host);
 
  const money=value=>new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}).format(value);
  function sync(){
