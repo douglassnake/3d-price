@@ -25,7 +25,7 @@ export function initTimeline({getStore,persist,getCurrent}){
  const form=columns.querySelector('.form-stack'),results=columns.querySelector('.result-stack');
  const inputPanels=[...form.children];
  if(inputPanels.length!==3)throw Error('Estrutura antiga da calculadora não reconhecida');
- const store=getStore();
+ const store=new Proxy({}, {get(_,key){return getStore()[key]},set(_,key,value){getStore()[key]=value;return true}});
  store.wizard=store.wizard&&typeof store.wizard==='object'?store.wizard:{step:0};
  if(!Number.isInteger(store.wizard.step)||store.wizard.step<0||store.wizard.step>=6)store.wizard.step=0;
 
@@ -74,6 +74,7 @@ export function initTimeline({getStore,persist,getCurrent}){
  const cf=make('div','fields');
  for(const id of ['printer','material','grams','quantity','hours','minutes'])moveInput(id,cf);
  cf.append(required('printerExampleNotice'));conf.append(cf);
+ const manualHint=inputPanels[0].querySelector('.hint');if(manualHint)conf.append(manualHint);
  areas[2].append(conf);inputPanels[0].remove();
 
  // 4. Insumos, depreciação, perdas e mão de obra.
