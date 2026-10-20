@@ -1,5 +1,8 @@
 # 3D Price
 
+## Linha do tempo de projetos
+Crie um projeto em seis passos: **Iniciar → Anexar arquivo → Configurar impressão → Calcular custos → Definir preço → Finalizar**. A navegação preserva o histórico, perfis, orçamentos e importação de fatiadores. Veja o [manual da linha do tempo](docs/LINHA_DO_TEMPO.md).
+
 ## Importação de fatiadores e GrabCAD Print
 O 3D Price importa metadados de **Cura, PrusaSlicer, OrcaSlicer e Bambu Studio**, além de relatórios de **GrabCAD Print**. Compatível com G-code, 3MF fatiado e CSV/TSV/XLSX de estimativas; o GrabCAD Print Standard também pode ser utilizado copiando o texto da estimativa. Todos os arquivos são processados localmente, com prévia e confirmação. Consulte [o manual dos fatiadores](docs/INTEGRACAO_FATIADORES.md).
 
