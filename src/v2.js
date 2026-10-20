@@ -136,7 +136,8 @@ export function initV2(api){
   if(!order?.calculation?.draft)return;
   if(!confirm('Abrir os dados deste pedido na calculadora? O rascunho atual será substituído, mas o pedido salvo não será alterado.'))return;
   Object.assign(store().draft,order.calculation.draft);
-  renderSelectors();paintFields();update();persist();nav('calculator');
+  renderSelectors();paintFields();update();persist();nav('calculator');window.dispatchEvent(new Event('3dprice:restore-calculation'));
+
  });
 
  function editProfile(type,id){
